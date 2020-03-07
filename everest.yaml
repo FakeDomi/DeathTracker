@@ -1,0 +1,6 @@
+﻿- Name: DeathTracker
+  Version: 1.0.0
+  DLL: CelesteDeathTracker.dll
+  Dependencies:
+    - Name: Everest
+      Version: 1.0.0
