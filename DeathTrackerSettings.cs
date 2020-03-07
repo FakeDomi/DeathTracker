@@ -13,7 +13,16 @@ namespace CelesteDeathTracker
         public int DisplayYPosition { get; set; } = 16;
 
         public bool FixedYPosition { get; set; } = false;
+        
+        public VisibilityOption DisplayVisibility { get; set; } = VisibilityOption.AfterDeathAndInMenu;
 
-        public bool AlwaysVisible { get; set; } = false;
+        public enum VisibilityOption
+        {
+            Disabled,
+            AfterDeath,
+            InMenu,
+            AfterDeathAndInMenu,
+            Always
+        }
     }
 }

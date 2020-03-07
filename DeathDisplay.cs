@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using Monocle;
 
+using static CelesteDeathTracker.DeathTrackerSettings.VisibilityOption;
+
 namespace CelesteDeathTracker
 {
     public class DeathDisplay : Entity
@@ -53,7 +55,7 @@ namespace CelesteDeathTracker
             _text = text;
             _width = ActiveFont.Measure(_text).X + TextPadLeft + TextPadRight;
 
-            if (!DeathTrackerModule.Settings.AlwaysVisible)
+            if (DeathTrackerModule.Settings.DisplayVisibility == AfterDeath || DeathTrackerModule.Settings.DisplayVisibility == AfterDeathAndInMenu)
             {
                 _timer = 3f;
             }
@@ -82,15 +84,16 @@ namespace CelesteDeathTracker
         {
             base.Update();
             
-            var maxMove = Engine.DeltaTime * 800f;
+            Y = Calc.Approach(Y, GetYPosition(), Engine.DeltaTime * 800f);
 
-            Y = Calc.Approach(Y, GetYPosition(), maxMove);
-
-            if (DeathTrackerModule.Settings.AlwaysVisible || _timer > 0f || (_level.Paused && _level.PauseMainMenuOpen))
+            if (DeathTrackerModule.Settings.DisplayVisibility == Always || _timer > 0f ||
+                (_level.Paused && _level.PauseMainMenuOpen &&
+                 (DeathTrackerModule.Settings.DisplayVisibility == InMenu ||
+                  DeathTrackerModule.Settings.DisplayVisibility == AfterDeathAndInMenu)))
             {
                 _lerp = Calc.Approach(_lerp, 1f, 1.2f * Engine.RawDeltaTime);
             }
-            else
+            else 
             {
                 _lerp = Calc.Approach(_lerp, 0f, 2f * Engine.RawDeltaTime);
             }

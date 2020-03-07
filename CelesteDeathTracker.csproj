@@ -32,20 +32,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Celeste">
-      <HintPath>..\..\..\..\..\Program Files\Epic Games\Celeste\Celeste.exe</HintPath>
+      <HintPath>C:\Program Files\Epic Games\Celeste\Celeste.exe</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="FNA">
-      <HintPath>..\..\..\..\..\Program Files\Epic Games\Celeste\FNA.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\Celeste\FNA.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_Celeste">
-      <HintPath>..\..\..\..\..\Program Files\Epic Games\Celeste\MMHOOK_Celeste.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\Celeste\MMHOOK_Celeste.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="YamlDotNet">
-      <HintPath>..\..\..\..\..\Program Files\Epic Games\Celeste\YamlDotNet.dll</HintPath>
+      <HintPath>C:\Program Files\Epic Games\Celeste\YamlDotNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
