@@ -7,12 +7,12 @@ Comes with an optional feature to restart the chapter when you can no longer bea
 
 ## Display format settings
 
-You can customize the text on the display via the in-game settings / the config file.
+You can customize the text on the display via the in-game settings / the config file.<br/>
 (Note that Everest doesn't show text settings when you have a file selected)
 
 Enter any format you like there. Certain values act as placeholders:
 
-`$C` - Deaths of the current attempt
-`$B` - Best (lowest death count) clear
-`$A` - Total deaths of the current area
+`$C` - Deaths of the current attempt<br/>
+`$B` - Best (lowest death count) clear<br/>
+`$A` - Total deaths of the current area<br/>
 `$T` - Total deaths of the save file
