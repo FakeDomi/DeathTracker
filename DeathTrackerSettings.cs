@@ -4,10 +4,18 @@ namespace CelesteDeathTracker
 {
     public class DeathTrackerSettings : EverestModuleSettings
     {
+        private string _displayFormat = "$C ($B)";
+
         public bool AutoRestartChapter { get; set; } = false;
-        
+
         [SettingMaxLength(32)]
-        public string DisplayFormat { get; set; } = "{0} ({1})";
+        public string DisplayFormat
+        {
+            get => _displayFormat;
+            set => _displayFormat = value.Contains("{0}") || value.Contains("{1}")
+                ? string.Format(value, "$C", "$B")
+                : value;
+        }
 
         [SettingRange(0, 105)]
         public int DisplayYPosition { get; set; } = 16;

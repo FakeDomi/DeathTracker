@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Celeste;
 using Celeste.Mod;
 using Monocle;
@@ -35,7 +36,7 @@ namespace CelesteDeathTracker
                 var sessionDeaths = level.Session.Deaths;
                 var stats = level.Session.OldStats.Modes[(int)level.Session.Area.Mode];
 
-                if (Settings.AutoRestartChapter && stats.Completed && sessionDeaths > 0 &&
+                if (Settings.AutoRestartChapter && stats.SingleRunCompleted && sessionDeaths > 0 &&
                     sessionDeaths >= stats.BestDeaths)
                 {
                     Engine.TimeRate = 1f;
@@ -53,10 +54,14 @@ namespace CelesteDeathTracker
 
             Everest.Events.Player.OnSpawn += player =>
             {
-                var sessionDeaths = level.Session.Deaths;
                 var stats = level.Session.OldStats.Modes[(int)level.Session.Area.Mode];
 
-                display.SetDisplayText(string.Format(Settings.DisplayFormat, sessionDeaths, stats.Completed ? stats.BestDeaths.ToString() : "-"));
+                display.SetDisplayText(new StringBuilder(Settings.DisplayFormat)
+                    .Replace("$C", level.Session.Deaths.ToString())
+                    .Replace("$B", stats.SingleRunCompleted ? stats.BestDeaths.ToString() : "-")
+                    .Replace("$A", stats.Deaths.ToString())
+                    .Replace("$T", SaveData.Instance.TotalDeaths.ToString())
+                    .ToString());
             };
         }
 
