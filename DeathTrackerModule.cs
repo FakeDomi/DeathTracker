@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using Celeste;
 using Celeste.Mod;
@@ -54,12 +55,13 @@ namespace CelesteDeathTracker
 
             Everest.Events.Player.OnSpawn += player =>
             {
-                var stats = level.Session.OldStats.Modes[(int)level.Session.Area.Mode];
+                var mode = (int) level.Session.Area.Mode;
+                var stats = level.Session.OldStats.Modes[mode];
 
                 display.SetDisplayText(new StringBuilder(Settings.DisplayFormat)
                     .Replace("$C", level.Session.Deaths.ToString())
                     .Replace("$B", stats.SingleRunCompleted ? stats.BestDeaths.ToString() : "-")
-                    .Replace("$A", stats.Deaths.ToString())
+                    .Replace("$A", SaveData.Instance.Areas_Safe.First(a => a.ID_Safe == level.Session.Area.ID).Modes[mode].Deaths.ToString())
                     .Replace("$T", SaveData.Instance.TotalDeaths.ToString())
                     .ToString());
             };
