@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Celeste;
 using Celeste.Mod;
@@ -24,14 +25,13 @@ namespace CelesteDeathTracker
             DeathDisplay display = null;
             Level level = null;
 
-            On.Celeste.LevelLoader.LoadingThread += (orig, self) =>
+            On.Celeste.LevelLoader.StartLevel += (orig, self) =>
             {
-                orig(self);
-                self.Level.Add(display = new DeathDisplay(self.Level));
-                
                 level = self.Level;
+                level.Add(display = new DeathDisplay(level));
+                orig(self);
             };
-
+            
             Everest.Events.Player.OnDie += player =>
             {
                 var sessionDeaths = level.Session.Deaths;
