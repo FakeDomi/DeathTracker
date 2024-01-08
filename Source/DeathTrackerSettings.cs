@@ -1,4 +1,6 @@
-﻿using Celeste.Mod;
+﻿// ReSharper disable UnusedMember.Global
+
+using Celeste.Mod;
 
 namespace CelesteDeathTracker
 {
@@ -8,7 +10,7 @@ namespace CelesteDeathTracker
 
         public bool AutoRestartChapter { get; set; } = false;
 
-        [SettingMaxLength(32)]
+        [SettingMaxLength(48)]
         public string DisplayFormat
         {
             get => _displayFormat;
@@ -21,7 +23,7 @@ namespace CelesteDeathTracker
         public int DisplayYPosition { get; set; } = 16;
 
         public bool FixedYPosition { get; set; } = false;
-        
+
         public VisibilityOption DisplayVisibility { get; set; } = VisibilityOption.AfterDeathAndInMenu;
 
         public enum VisibilityOption

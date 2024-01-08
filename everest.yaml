@@ -1,6 +1,6 @@
-﻿- Name: DeathTracker
+- Name: DeathTracker
   Version: 1.1.0
-  DLL: CelesteDeathTracker.dll
+  DLL: bin/DeathTracker.dll
   Dependencies:
-    - Name: Everest
-      Version: 1.0.0
+    - Name: EverestCore
+      Version: 1.4465.0

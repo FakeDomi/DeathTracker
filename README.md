@@ -7,18 +7,20 @@ Comes with an optional feature to restart the chapter when you can no longer bea
 
 ## Display format settings
 
-You can customize the text on the display via the in-game settings / the config file.<br/>
-(Note that Everest doesn't show text settings when you have a file selected)
+You can customize the text on the display via the in-game settings / the config file.  
+(Everest doesn't show text settings when you have a file selected, you need to go back to the title screen!)
 
 Enter any format you like there. Certain values act as placeholders:
 
-`$C` - Deaths of the current attempt<br/>
-`$B` - Best (lowest death count) clear<br/>
-`$A` - Total deaths of the current area<br/>
-`$T` - Total deaths of the save file<br/>
-`$L` - Deaths since the last level load<br/>
-`$S` - Deaths on the current screen (since the last screen transition)<br/>
+`$C` - Deaths of the current attempt  
+`$B` - Best (lowest death count) clear  
+`$A` - Total deaths of the current level  
+`$T` - Total deaths of the save file  
+`$L` - Deaths since the last level load  
+`$S` - Deaths since the last screen transition
 
-`$L` and `$S` show deaths for the current gaming session only, so they start at 0 when the game loads.<br/>
-In other words, they help you to keep track of your deaths on this level for the current gaming session (`$L`), or deaths on the current screen for the current gaming session (`$S`).<br/>
-If you switch level (for `$L`) or screen (for `$S`) and come back, they reset to 0.
+`$L` and `$S` are not saved when you leave the level / screen. Restarting the game will also reset them to 0.
+
+## Custom skull icons
+
+This mod can load skull icons that have been customized with CollabUtils2 or AltSidesHelper.

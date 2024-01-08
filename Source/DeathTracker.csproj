@@ -1,64 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C77A32BB-841D-4540-8E0A-3045317E56AC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CelesteDeathTracker</RootNamespace>
-    <AssemblyName>CelesteDeathTracker</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Celeste">
-      <HintPath>C:\Program Files\Epic Games\Celeste\Celeste.exe</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="FNA">
-      <HintPath>C:\Program Files\Epic Games\Celeste\FNA.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MMHOOK_Celeste">
-      <HintPath>C:\Program Files\Epic Games\Celeste\MMHOOK_Celeste.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="YamlDotNet">
-      <HintPath>C:\Program Files\Epic Games\Celeste\YamlDotNet.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DeathDisplay.cs" />
-    <Compile Include="DeathTrackerModule.cs" />
-    <Compile Include="DeathTrackerSettings.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="everest.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <AssemblyName>DeathTracker</AssemblyName>
+        <RootNamespace>CelesteDeathTracker</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\..\Celeste.dll')">..\..\..</CelestePrefix>
+        <CelestePrefix Condition="'$(CelestePrefix)' == ''">..\lib-stripped</CelestePrefix>
+        <Version>1.1.0</Version>
+    </PropertyGroup>
+
+    <!--Disable "Copy Local" for all references-->
+    <ItemDefinitionGroup>
+        <PackageReference PrivateAssets="all" ExcludeAssets="runtime" />
+        <Reference Private="false" />
+    </ItemDefinitionGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="25.0.2" PrivateAssets="all" ExcludeAssets="runtime" />
+        <PackageReference Include="MonoMod.Patcher" Version="25.0.0-prerelease.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="$(CelestePrefix)\Celeste.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll">
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(CelestePrefix)\FNA.dll">
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Target Name="CopyFiles" AfterTargets="Build">
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="..\bin" />
+        <Copy SourceFiles="$(OutputPath)\$(AssemblyName).pdb" DestinationFolder="..\bin" />
+    </Target>
+    
+    <PropertyGroup>
+        <PathMap>$(MSBuildProjectDirectory)=DeathTracker/</PathMap>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <Optimize>False</Optimize>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <Optimize>True</Optimize>
+    </PropertyGroup>
+
 </Project>

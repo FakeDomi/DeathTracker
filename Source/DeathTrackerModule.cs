@@ -1,65 +1,59 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Reflection.Emit;
 using Celeste;
 using Celeste.Mod;
 using Monocle;
+using MonoMod.ModInterop;
 
 namespace CelesteDeathTracker
 {
     public class DeathTrackerModule : EverestModule
     {
-        public static DeathTrackerModule Module;
-        private static DeathDisplay display = null;
-        private static int deathsSinceLevelLoad = 0;
-        private static int deathsSinceTransition = 0;
+        public static DeathTrackerModule? Instance { get; private set; }
+
+        public override Type SettingsType => typeof(DeathTrackerSettings);
+        public static DeathTrackerSettings? Settings => (DeathTrackerSettings?)Instance?._Settings;
+
+        private delegate Level GetLevelDelegate(Player player);
+        // ReSharper disable once InconsistentNaming
+        private static GetLevelDelegate GetLevel = null!;
 
         public DeathTrackerModule()
         {
-            Module = this;
-        }
-
-        public override Type SettingsType => typeof(DeathTrackerSettings);
-        public static DeathTrackerSettings Settings => (DeathTrackerSettings) Module._Settings;
-
-        public static void UpdateDisplay(Level level)
-        {
-            var mode = (int)level.Session.Area.Mode;
-            var stats = level.Session.OldStats.Modes[mode];
-
-            display.SetDisplayText(new StringBuilder(Settings.DisplayFormat)
-                .Replace("$C", level.Session.Deaths.ToString())
-                .Replace("$B", stats.SingleRunCompleted ? stats.BestDeaths.ToString() : "-")
-                .Replace("$A", SaveData.Instance.Areas_Safe.First(a => a.ID_Safe == level.Session.Area.ID).Modes[mode].Deaths.ToString())
-                .Replace("$T", SaveData.Instance.TotalDeaths.ToString())
-                .Replace("$L", deathsSinceLevelLoad.ToString())
-                .Replace("$S", deathsSinceTransition.ToString())
-                .ToString());
+            Instance = this;
         }
 
         public override void Load()
         {
-            Level level = null;
+            CreateGetLevelDelegate();
+            ModInteropManager.ModInterop(typeof(CollabUtilsInterop));
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.GetName().Name == "AltSidesHelper")
+                {
+                    AltSidesHelperInterop.CreateDelegates(assembly);
+                }
+            }
 
             On.Celeste.LevelLoader.StartLevel += (orig, self) =>
             {
-                level = self.Level;
-                level.Add(display = new DeathDisplay(level));
-                deathsSinceLevelLoad = 0;
-                deathsSinceTransition = 0;
+                var level = self.Level;
+                level.Add(new DeathDisplay(level));
                 orig(self);
             };
             
             Everest.Events.Player.OnDie += player =>
             {
-                var sessionDeaths = level.Session.Deaths;
-                var stats = level.Session.OldStats.Modes[(int)level.Session.Area.Mode];
-                deathsSinceLevelLoad++;
-                deathsSinceTransition++;
+                var level = GetLevel(player);
+                var session = level.Session;
+                var sessionDeaths = session.Deaths;
+                var stats = session.OldStats.Modes[(int)session.Area.Mode];
 
-                if (Settings.AutoRestartChapter && stats.SingleRunCompleted && sessionDeaths > 0 &&
-                    sessionDeaths >= stats.BestDeaths)
+                level.Tracker.GetEntity<DeathDisplay>()?.OnDeath();
+
+                if (Settings!.AutoRestartChapter && stats.SingleRunCompleted && sessionDeaths > 0 && sessionDeaths >= stats.BestDeaths)
                 {
                     Engine.TimeRate = 1f;
                     level.Session.InArea = false;
@@ -76,18 +70,29 @@ namespace CelesteDeathTracker
 
             Everest.Events.Player.OnSpawn += player =>
             {
-                UpdateDisplay(level);
+                GetLevel(player).Tracker.GetEntity<DeathDisplay>()?.UpdateDisplayText();
             };
 
-            Everest.Events.Level.OnTransitionTo += (lvl, next, direction) =>
+            Everest.Events.Level.OnTransitionTo += (level, next, direction) =>
             {
-                deathsSinceTransition = 0;
-                UpdateDisplay(lvl);
+                level.Tracker.GetEntity<DeathDisplay>()?.OnScreenTransition();
             };
         }
 
         public override void Unload()
         {
+        }
+
+        private static void CreateGetLevelDelegate()
+        {
+            var dynamicMethod = new DynamicMethod("GetLevel_generated", typeof(Level), [typeof(Player)]);
+            var il = dynamicMethod.GetILGenerator();
+
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldfld, typeof(Player).GetField("level", BindingFlags.Instance | BindingFlags.NonPublic)!);
+            il.Emit(OpCodes.Ret);
+
+            GetLevel = dynamicMethod.CreateDelegate<GetLevelDelegate>();
         }
     }
 }
